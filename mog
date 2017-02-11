@@ -2,13 +2,16 @@
 
 from __future__ import print_function
 import os
-import ConfigParser
+try:
+    import ConfigParser as configparser
+except ImportError:
+    import configparser
 import sys
 import re
 import subprocess
 
 def match_file(regex, name):
-    tosearch = subprocess.check_output(['file', name])
+    tosearch = subprocess.check_output(['file', name]).decode("utf-8")
     return re.match(regex, tosearch)
 
 def action_arg(action, name):
@@ -17,7 +20,7 @@ def action_arg(action, name):
 def settings_get_bool(cfg, value, default):
     try:
         return cfg.getboolean('settings', value)
-    except ConfigParser.NoSectionError:
+    except configparser.NoSectionError:
         return default
     except ValueError:
         print("Invalid settings variable {} - should be boolean".format(value))
@@ -30,7 +33,7 @@ def parse_config():
     actions = {'arg': action_arg}
 
     # Parse config
-    things = ConfigParser.ConfigParser()
+    things = configparser.RawConfigParser()
     cfg = os.path.expanduser("~/." + os.path.basename(sys.argv[0]) + "rc")
     things.read(cfg)
 
