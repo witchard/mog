@@ -36,10 +36,20 @@ The following actions are supported:
 The config file is an ini style format defined as follows:
 
 ```ini
-[name-of-match-action]
+[settings]
+showname=yes
+
+[name-of-match-action-1]
+match=arg
+action=arg
+
+[name-of-match-action-2]
 match=arg
 action=arg
 ```
+
+The `settings` section may contain the following:
+* showname - default: True. Show the name of each file before performing the action.
 
 You can find some examples in the example-configs directory.
 
@@ -62,5 +72,5 @@ echo '$PATH=$PATH:$HOME/bin' >> .bashrc
 ## Ideas
 
 * Enable capture groups in the regexes to be used as arguments. E.g. to capture script type for syntax highlighting
-* Add settings to configure things like whether file names are printed before starting each file
 * Add command line argument to enable piping the output of each file through `head`
+* Comand line arguments to override settings

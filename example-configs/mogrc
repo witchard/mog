@@ -1,3 +1,6 @@
+[settings]
+showname=yes
+
 [python]
 file=.*Python script
 arg=pygmentize -l python

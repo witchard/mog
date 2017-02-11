@@ -14,6 +14,16 @@ def match_file(regex, name):
 def action_arg(action, name):
     os.system('{} {}'.format(action, name))
 
+def settings_get_bool(cfg, value, default):
+    try:
+        return cfg.getboolean('settings', value)
+    except ConfigParser.NoSectionError:
+        return default
+    except ValueError:
+        print("Invalid settings variable {} - should be boolean".format(value))
+        sys.exit(1)
+
+
 def parse_config():
     matches = {'file': match_file,
                'name': re.match}
@@ -24,8 +34,16 @@ def parse_config():
     cfg = os.path.expanduser("~/." + os.path.basename(sys.argv[0]) + "rc")
     things.read(cfg)
 
+    # Extract settings
+    settings = {'showname': settings_get_bool(things, 'showname', True)}
+
+    # Extract matches and actions
     things_to_do = []
     for thing in things.sections():
+        # Skip settings section
+        if thing == 'settings':
+            continue
+        # Parse others
         bits = things.items(thing)
         match = None
         action = None
@@ -42,12 +60,13 @@ def parse_config():
 
     if len(things_to_do) == 0:
         print("Please define what you want me to do in " + cfg)
-    return things_to_do
+    return (settings,things_to_do)
 
-def run_match_action(things_to_do, files):
+def run_match_action(settings, things_to_do, files):
     if len(things_to_do) > 0:
         for f in files:
-            print('==> {} <=='.format(f))
+            if settings['showname']:
+                print('==> {} <=='.format(f))
             sys.stdout.flush()
             for match, action in things_to_do:
                 if match[0](match[1], f):
@@ -57,10 +76,10 @@ def run_match_action(things_to_do, files):
             sys.stdout.flush()
 
 if __name__ == "__main__":
-    config = parse_config()
+    settings, config = parse_config()
     if len(config) == 0:
         sys.exit(1)
     try:
-        run_match_action(config, sys.argv[1:])
+        run_match_action(settings, config, sys.argv[1:])
     except:
         pass
