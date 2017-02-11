@@ -62,9 +62,16 @@ It should be noted that `mog` uses the name of the script to determine what conf
 Simply download the `mog` script and place it somewhere in your path. E.g:
 
 ```bash
+# Get the script
 mkdir $HOME/bin
 cd $HOME/bin
 wget https://raw.githubusercontent.com/witchard/mog/master/mog
+
+# Get the config
+cd $HOME
+wget https://github.com/witchard/mog/blob/master/example-configs/mogrc -o .mogrc
+
+# Setup path
 echo '$PATH=$PATH:$HOME/bin' >> .bashrc
 # logout and back in
 ```
