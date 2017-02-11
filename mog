@@ -67,7 +67,7 @@ def run_match_action(settings, things_to_do, files):
         for f in files:
             if settings['showname']:
                 print('==> {} <=='.format(f))
-            sys.stdout.flush()
+                sys.stdout.flush()
             for match, action in things_to_do:
                 if match[0](match[1], f):
                     action[0](action[1], f)
