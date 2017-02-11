@@ -1,0 +1,28 @@
+[python]
+file=.*Python script
+arg=pygmentize -l python
+
+[elfs]
+file=.*ELF
+arg=objdump -ft
+
+[dirs]
+file=.*directory
+arg=ls -lh
+
+[markdown]
+name=.*\.md
+arg=mdv -t 809.5311
+
+[images]
+file=.*image data.*
+arg=identify -format "size: %xx%y, frames: %n\n"
+
+[ASCII]
+file=.*ASCII
+arg=cat
+
+[binary]
+; We assume anything thats left is binary
+name=.*
+arg=xxd

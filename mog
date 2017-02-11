@@ -1,0 +1,66 @@
+#!/usr/bin/env python
+
+from __future__ import print_function
+import os
+import ConfigParser
+import sys
+import re
+import subprocess
+
+def match_file(regex, name):
+    tosearch = subprocess.check_output(['file', name])
+    return re.match(regex, tosearch)
+
+def action_arg(action, name):
+    os.system('{} {}'.format(action, name))
+
+def parse_config():
+    matches = {'file': match_file,
+               'name': re.match}
+    actions = {'arg': action_arg}
+
+    # Parse config
+    things = ConfigParser.ConfigParser()
+    cfg = os.path.expanduser("~/." + os.path.basename(sys.argv[0]) + "rc")
+    things.read(cfg)
+
+    things_to_do = []
+    for thing in things.sections():
+        bits = things.items(thing)
+        match = None
+        action = None
+        for bit in bits:
+            if not match and bit[0] in matches.keys():
+                match = (matches[bit[0]], bit[1])
+            elif not action and bit[0] in actions.keys():
+                action = (actions[bit[0]], bit[1])
+            else:
+                print("Invalid config variable {} in section {}".format(bit[0], thing))
+                sys.exit(1)
+        if match and action:
+            things_to_do.append((match, action))
+
+    if len(things_to_do) == 0:
+        print("Please define what you want me to do in " + cfg)
+    return things_to_do
+
+def run_match_action(things_to_do, files):
+    if len(things_to_do) > 0:
+        for f in files:
+            print('==> {} <=='.format(f))
+            sys.stdout.flush()
+            for match, action in things_to_do:
+                if match[0](match[1], f):
+                    action[0](action[1], f)
+                    break
+            print()
+            sys.stdout.flush()
+
+if __name__ == "__main__":
+    config = parse_config()
+    if len(config) == 0:
+        sys.exit(1)
+    try:
+        run_match_action(config, sys.argv[1:])
+    except:
+        pass
