@@ -105,13 +105,14 @@ def run_match_action(things_to_do, file_name):
 
 def run(settings, things_to_do, files):
     for f in files:
-        run_match_action(things_to_do, f)
+        try:
+            run_match_action(things_to_do, f)
+        except Exception, e:
+            print('==> Error: "{}" when processing file {} <=='.format(repr(e), f))
+            sys.stdout.flush()
 
 if __name__ == "__main__":
     settings, config = parse_config()
     if len(config) == 0:
         sys.exit(1)
-    try:
-        run(settings, config, sys.argv[1:])
-    except:
-        pass
+    run(settings, config, sys.argv[1:])
