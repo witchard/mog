@@ -146,7 +146,7 @@ def parse_config():
     return (settings,things_to_do)
 
 ##### Running
-def run_match_action(things_to_do, file_name):
+def run_match_action(settings, things_to_do, file_name):
     for match, action, cfg_section in things_to_do:
         if match(file_name):
             if settings['showname']:
@@ -164,13 +164,16 @@ def run_match_action(things_to_do, file_name):
 def run(settings, things_to_do, files):
     for f in files:
         try:
-            run_match_action(things_to_do, f)
+            run_match_action(settings, things_to_do, f)
         except Exception, e:
             print('==> Error: "{}" when processing file {} <=='.format(repr(e), f))
             flush_swallow()
 
-if __name__ == "__main__":
+def main():
     settings, config = parse_config()
     if len(config) == 0:
         sys.exit(1)
     run(settings, config, sys.argv[1:])
+
+if __name__ == "__main__":
+    main()
