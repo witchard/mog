@@ -1,5 +1,6 @@
 [settings]
 showname=yes
+showsection=no
 
 [pygments]
 ; Pygmentize returns 'text' when it can't highlight, so we use an inverted match for text.
