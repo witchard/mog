@@ -76,8 +76,3 @@ echo '$PATH=$PATH:$HOME/bin' >> .bashrc
 # logout and back in
 ```
 
-## Ideas
-
-* Enable capture groups in the regexes to be used as arguments. E.g. to capture script type for syntax highlighting
-* Add command line argument to enable piping the output of each file through `head`
-* Comand line arguments to override settings
