@@ -14,6 +14,14 @@ The man page for `cat` says that it can: concatenate files and print on the stan
 * Perform `objdump` on executables
 * List a directory
 
+## Installation
+
+The simplest way is to install via pip: `[sudo] pip install mog`.
+
+For the latest development version: 
+* `[sudo] pip install git+https://github.com/witchard/mog`
+* Or clone this repository and then run `[sudo] python ./setup.py install`
+
 ## How does it work?
 
 `mog` reads the `$HOME/.mogrc` config file which describes a series of operations it can do in an ordered manner. Each operation has a match command and an action command. For each file you give to `mog` it will test each match command in turn, when one matches it will perform the action.
@@ -66,23 +74,4 @@ You can find some examples in the example-configs directory.
 Matches and actions will be processed in the order found in the file.
 
 It should be noted that `mog` uses the name of the script to determine what config file to read. So for example one can `ln -s mog feline` and then it would use the `$HOME/.felinerc` as the config file. This means you can have multiple configurations for different names.
-
-## Installation
-
-Simply download the `mog` script and place it somewhere in your path. E.g:
-
-```bash
-# Get the script
-mkdir $HOME/bin
-cd $HOME/bin
-wget https://raw.githubusercontent.com/witchard/mog/master/mog
-
-# Get the config
-cd $HOME
-wget https://github.com/witchard/mog/blob/master/example-configs/mogrc -o .mogrc
-
-# Setup path
-echo '$PATH=$PATH:$HOME/bin' >> .bashrc
-# logout and back in
-```
 
