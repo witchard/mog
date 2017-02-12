@@ -11,6 +11,7 @@ import re
 import subprocess
 from functools import partial
 
+##### Matches
 def match_file(regex, name):
     tosearch = subprocess.check_output(['file', name]).decode("utf-8")
     return re.match(regex, tosearch)
@@ -26,9 +27,11 @@ def match_pygmentize(regex, name):
 def match_inverted(func, regex, name):
     return not func(regex, name)
 
+##### Actions
 def action_arg(action, name):
-    os.system('{} {}'.format(action, name))
+    os.system('{} {} 2>/dev/null'.format(action, name))
 
+##### Helpers
 def config_get_bool(cfg, value, default, section='settings'):
     try:
         return cfg.getboolean(section, value)
@@ -40,7 +43,13 @@ def config_get_bool(cfg, value, default, section='settings'):
         print("Invalid settings variable {} in section {} - should be boolean".format(value, section))
         sys.exit(1)
 
+def flush_swallow():
+    try:
+        sys.stdout.flush()
+    except:
+        pass
 
+##### Parsing
 def parse_config():
     matches = {'file': match_file,
                'file_mime': match_file_mime,
@@ -88,6 +97,7 @@ def parse_config():
         print("Please define what you want me to do in " + cfg)
     return (settings,things_to_do)
 
+##### Running
 def run_match_action(things_to_do, file_name):
     for match, action, cfg_section in things_to_do:
         if match(file_name):
@@ -96,10 +106,10 @@ def run_match_action(things_to_do, file_name):
                 if settings['showsection']:
                     msg = "{} [{}]".format(msg, cfg_section)
                 print('==> {} <=='.format(msg))
-                sys.stdout.flush()
+                flush_swallow()
             action(file_name)
             print()
-            sys.stdout.flush()
+            flush_swallow()
             return
     print("==> Warning: don't know what to do with {} <==".format(file_name))
 
@@ -109,7 +119,7 @@ def run(settings, things_to_do, files):
             run_match_action(things_to_do, f)
         except Exception, e:
             print('==> Error: "{}" when processing file {} <=='.format(repr(e), f))
-            sys.stdout.flush()
+            flush_swallow()
 
 if __name__ == "__main__":
     settings, config = parse_config()
