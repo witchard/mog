@@ -15,16 +15,21 @@ def match_file(regex, name):
     tosearch = subprocess.check_output(['file', name]).decode("utf-8")
     return re.match(regex, tosearch)
 
+def match_inverted(func, regex, name):
+    return not func(regex, name)
+
 def action_arg(action, name):
     os.system('{} {}'.format(action, name))
 
-def settings_get_bool(cfg, value, default):
+def config_get_bool(cfg, value, default, section='settings'):
     try:
-        return cfg.getboolean('settings', value)
+        return cfg.getboolean(section, value)
     except configparser.NoSectionError:
         return default
+    except configparser.NoOptionError:
+        return default
     except ValueError:
-        print("Invalid settings variable {} - should be boolean".format(value))
+        print("Invalid settings variable {} in section {} - should be boolean".format(value, section))
         sys.exit(1)
 
 
@@ -39,7 +44,7 @@ def parse_config():
     things.read(cfg)
 
     # Extract settings
-    settings = {'showname': settings_get_bool(things, 'showname', True)}
+    settings = {'showname': config_get_bool(things, 'showname', True)}
 
     # Extract matches and actions
     things_to_do = []
@@ -48,12 +53,18 @@ def parse_config():
         if thing == 'settings':
             continue
         # Parse others
+        invert_match = config_get_bool(things, 'invert_match', False, thing)
         bits = things.items(thing)
         match = None
         action = None
         for bit in bits:
-            if not match and bit[0] in matches.keys():
-                match = partial(matches[bit[0]], bit[1])
+            if bit[0] == 'invert_match':
+                pass # Handled earlier
+            elif not match and bit[0] in matches.keys():
+                if invert_match:
+                    match = partial(match_inverted, matches[bit[0]], bit[1])
+                else:
+                    match = partial(matches[bit[0]], bit[1])
             elif not action and bit[0] in actions.keys():
                 action = partial(actions[bit[0]], bit[1])
             else:
