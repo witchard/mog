@@ -24,6 +24,7 @@ Currently the following match commands are supported:
 
 * `name=<regex>` - Check if the file name matches the regex
 * `file=<regex>` - Check if the output of `file` matches the regex
+* `file_mime=<regex>` - Check if the output of `file --mime` matches the regex
 * `pygmentize=<regex>` - Check if the output of `pygmentize -N` matches the regex
 
 Note, one can specify `invert_match`, you can use this to cause a match when the regex does not match.

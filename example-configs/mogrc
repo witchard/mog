@@ -17,9 +17,9 @@ arg=pygmentize -l python
 file=.*ELF
 arg=objdump -ft
 
-[dirs]
-file=.*directory
-arg=ls -lh
+[filesystem]
+file_mime=.*\sinode\/
+arg=ls -lh --color=always
 
 [markdown]
 name=.*\.md

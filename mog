@@ -15,6 +15,10 @@ def match_file(regex, name):
     tosearch = subprocess.check_output(['file', name]).decode("utf-8")
     return re.match(regex, tosearch)
 
+def match_file_mime(regex, name):
+    tosearch = subprocess.check_output(['file', '--mime', name]).decode("utf-8")
+    return re.match(regex, tosearch)
+
 def match_pygmentize(regex, name):
     tosearch = subprocess.check_output(['pygmentize', '-N', name]).decode("utf-8")
     return re.match(regex, tosearch)
@@ -39,6 +43,7 @@ def config_get_bool(cfg, value, default, section='settings'):
 
 def parse_config():
     matches = {'file': match_file,
+               'file_mime': match_file_mime,
                'name': re.match,
                'pygmentize': match_pygmentize}
     actions = {'arg': action_arg}
