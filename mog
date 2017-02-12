@@ -11,6 +11,48 @@ import re
 import subprocess
 from functools import partial
 
+default_config_file = """; mog config file
+[settings]
+showname=yes
+showsection=no
+
+[pygments]
+; Pygmentize returns 'text' when it can't highlight, so we use an inverted match for text.
+invert_match=yes
+pygmentize=text
+arg=pygmentize
+
+[python]
+; Still required for scripts that dont have .py extension.
+file=.*Python script
+arg=pygmentize -l python
+
+[elfs]
+file=.*ELF
+arg=objdump -ft
+
+[filesystem]
+file_mime=.*\sinode\/
+arg=ls -lh --color=always
+
+[markdown]
+name=.*\.md
+arg=mdv -t 809.5311
+
+[images]
+file=.*image data.*
+arg=identify -format "size: %xx%y, frames: %n\\n"
+
+[ASCII]
+file=.*ASCII
+arg=cat
+
+[binary]
+; We assume anything thats left is binary
+name=.*
+arg=xxd
+"""
+
 ##### Matches
 def match_file(regex, name):
     tosearch = subprocess.check_output(['file', name]).decode("utf-8")
@@ -49,6 +91,10 @@ def flush_swallow():
     except:
         pass
 
+def create_default_config(path):
+    with open(path, 'w') as cfg:
+        cfg.write(default_config_file)
+
 ##### Parsing
 def parse_config():
     matches = {'file': match_file,
@@ -60,6 +106,8 @@ def parse_config():
     # Parse config
     things = configparser.RawConfigParser()
     cfg = os.path.expanduser("~/." + os.path.basename(sys.argv[0]) + "rc")
+    if not os.path.exists(cfg):
+        create_default_config(cfg)
     things.read(cfg)
 
     # Extract settings
