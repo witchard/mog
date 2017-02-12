@@ -9,6 +9,7 @@ except ImportError:
 import sys
 import re
 import subprocess
+from functools import partial
 
 def match_file(regex, name):
     tosearch = subprocess.check_output(['file', name]).decode("utf-8")
@@ -52,9 +53,9 @@ def parse_config():
         action = None
         for bit in bits:
             if not match and bit[0] in matches.keys():
-                match = (matches[bit[0]], bit[1])
+                match = partial(matches[bit[0]], bit[1])
             elif not action and bit[0] in actions.keys():
-                action = (actions[bit[0]], bit[1])
+                action = partial(actions[bit[0]], bit[1])
             else:
                 print("Invalid config variable {} in section {}".format(bit[0], thing))
                 sys.exit(1)
@@ -72,8 +73,8 @@ def run_match_action(settings, things_to_do, files):
                 print('==> {} <=='.format(f))
                 sys.stdout.flush()
             for match, action in things_to_do:
-                if match[0](match[1], f):
-                    action[0](action[1], f)
+                if match(f):
+                    action(f)
                     break
             print()
             sys.stdout.flush()
