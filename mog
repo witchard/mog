@@ -83,27 +83,30 @@ def parse_config():
         print("Please define what you want me to do in " + cfg)
     return (settings,things_to_do)
 
-def run_match_action(settings, things_to_do, files):
-    if len(things_to_do) > 0:
-        for f in files:
-            for match, action, cfg_section in things_to_do:
-                if match(f):
-                    if settings['showname']:
-                        msg = f
-                        if settings['showsection']:
-                            msg = "{} [{}]".format(msg, cfg_section)
-                        print('==> {} <=='.format(msg))
-                        sys.stdout.flush()
-                    action(f)
-                    print()
-                    sys.stdout.flush()
-                    break
+def run_match_action(things_to_do, file_name):
+    for match, action, cfg_section in things_to_do:
+        if match(file_name):
+            if settings['showname']:
+                msg = file_name
+                if settings['showsection']:
+                    msg = "{} [{}]".format(msg, cfg_section)
+                print('==> {} <=='.format(msg))
+                sys.stdout.flush()
+            action(file_name)
+            print()
+            sys.stdout.flush()
+            return
+    print("==> Warning: don't know what to do with {} <==".format(file_name))
+
+def run(settings, things_to_do, files):
+    for f in files:
+        run_match_action(things_to_do, f)
 
 if __name__ == "__main__":
     settings, config = parse_config()
     if len(config) == 0:
         sys.exit(1)
     try:
-        run_match_action(settings, config, sys.argv[1:])
+        run(settings, config, sys.argv[1:])
     except:
         pass
