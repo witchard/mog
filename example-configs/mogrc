@@ -1,7 +1,14 @@
 [settings]
 showname=yes
 
+[pygments]
+; Pygmentize returns 'text' when it can't highlight, so we use an inverted match for text.
+invert_match=yes
+pygmentize=text
+arg=pygmentize
+
 [python]
+; Still required for scripts that dont have .py extension.
 file=.*Python script
 arg=pygmentize -l python
 

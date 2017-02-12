@@ -15,6 +15,10 @@ def match_file(regex, name):
     tosearch = subprocess.check_output(['file', name]).decode("utf-8")
     return re.match(regex, tosearch)
 
+def match_pygmentize(regex, name):
+    tosearch = subprocess.check_output(['pygmentize', '-N', name]).decode("utf-8")
+    return re.match(regex, tosearch)
+
 def match_inverted(func, regex, name):
     return not func(regex, name)
 
@@ -35,7 +39,8 @@ def config_get_bool(cfg, value, default, section='settings'):
 
 def parse_config():
     matches = {'file': match_file,
-               'name': re.match}
+               'name': re.match,
+               'pygmentize': match_pygmentize}
     actions = {'arg': action_arg}
 
     # Parse config
