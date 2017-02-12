@@ -6,7 +6,7 @@ A different take on the UNIX tool `cat`.
 
 ## What is this?
 
-The man page for `cat` says that it can: concatenate files and print on the standard output. Often (at least for me) it's main use is for the latter... `mog` tries to help you "print on the standard output" in a more intelligent way. For example, it can be configured to:
+The man page for `cat` says that it can: concatenate files and print on the standard output. Often (at least for me) its main use is for the latter... `mog` tries to help you "print on the standard output" in a more intelligent way. For example, it can be configured to:
 
 * Syntax highlight scripts
 * Print a hex dump of binary files
