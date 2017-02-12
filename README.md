@@ -24,7 +24,7 @@ For the latest development version:
 
 ## How does it work?
 
-`mog` reads the `$HOME/.mogrc` config file which describes a series of operations it can do in an ordered manner. Each operation has a match command and an action command. For each file you give to `mog` it will test each match command in turn, when one matches it will perform the action.
+`mog` reads the `$HOME/.mogrc` config file which describes a series of operations it can do in an ordered manner. Each operation has a match command and an action command. For each file you give to `mog` it will test each match command in turn, when one matches it will perform the action. A reasonably useful config file is generated when you first run it.
 
 ### Matches
 
@@ -68,8 +68,6 @@ The `settings` section may contain the following:
 * `showsection` - default: `False`. Show config file section where match occurred next to file name. `showname` must be `True` for this to work.
 
 The `invert_match` value is optional and will cause the match to be inverted - i.e. you can use this to cause a match when the regex does not match.
-
-You can find some examples in the example-configs directory.
 
 Matches and actions will be processed in the order found in the file.
 
