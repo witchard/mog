@@ -24,6 +24,9 @@ Currently the following match commands are supported:
 
 * `name=<regex>` - Check if the file name matches the regex
 * `file=<regex>` - Check if the output of `file` matches the regex
+* `pygmentize=<regex>` - Check if the output of `pygmentize -N` matches the regex
+
+Note, one can specify `invert_match`, you can use this to cause a match when the regex does not match.
 
 ### Actions
 
@@ -42,14 +45,18 @@ showname=yes
 [name-of-match-action-1]
 match=arg
 action=arg
+invert_match=boolean
 
 [name-of-match-action-2]
 match=arg
 action=arg
+invert_match=boolean
 ```
 
 The `settings` section may contain the following:
 * showname - default: True. Show the name of each file before performing the action.
+
+The `invert_match` value is optional and will cause the match to be inverted - i.e. you can use this to cause a match when the regex does not match.
 
 You can find some examples in the example-configs directory.
 
