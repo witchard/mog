@@ -165,7 +165,7 @@ def run(settings, things_to_do, files):
     for f in files:
         try:
             run_match_action(settings, things_to_do, f)
-        except Exception, e:
+        except Exception as e:
             print('==> Error: "{}" when processing file {} <=='.format(repr(e), f))
             flush_swallow()
 

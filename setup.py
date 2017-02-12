@@ -2,7 +2,7 @@ from setuptools import setup
 setup(
   name = 'mog',
   packages = ['mog'],
-  version = '0.1',
+  version = '0.2',
   description = 'A different take on the UNIX tool cat',
   install_requires = ['mdv', 'pygments'],
   author = 'witchard',
