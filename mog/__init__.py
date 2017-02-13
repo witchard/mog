@@ -50,6 +50,10 @@ arg=mediainfo
 file=.*PDF document
 argreplace=pdftotext %F -
 
+[tarballs]
+name=.*\.tar(\.gz|\.bz2|\.Z|\.xz)?$
+arg=tar --list -f
+
 [ASCII]
 file=.*ASCII
 arg=cat
