@@ -2,3 +2,4 @@ build
 dist
 mog.egg-info
 *.swp
+*.pyc
