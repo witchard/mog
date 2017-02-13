@@ -78,10 +78,12 @@ def match_inverted(func, regex, name):
     return not func(regex, name)
 
 ##### Actions
-def action_arg(action, name):
+def action_arg(action, name, match_result):
     os.system('{} {}'.format(action, quote(name)))
 
-def action_argreplace(action, name):
+def action_argreplace(action, name, match_result):
+    for i, val in enumerate(match_result.groups()):
+        action = action.replace('%' + str(i), val)
     os.system(action.replace('%F', quote(name)))
 
 ##### Helpers
@@ -160,14 +162,15 @@ def parse_config():
 ##### Running
 def run_match_action(settings, things_to_do, file_name):
     for match, action, cfg_section in things_to_do:
-        if match(file_name):
+        match_result = match(file_name)
+        if match_result:
             if settings['showname']:
                 msg = file_name
                 if settings['showsection']:
                     msg = "{} [{}]".format(msg, cfg_section)
                 print('==> {} <=='.format(msg))
                 flush_swallow()
-            action(file_name)
+            action(file_name, match_result)
             print()
             flush_swallow()
             return

@@ -42,7 +42,7 @@ Note, one can specify `invert_match`, you can use this to cause a match when the
 The following actions are supported:
 
 * `arg=<program>` - Pass the file name as an argument to the program
-* `argreplace=<program>` - Replace %F in `<program>` with the filename and execute
+* `argreplace=<program>` - Replace %F in `<program>` with the filename. Replace %N (where N is an integer) in `<program>` with matching capture group from match regex. Execute the result.
 
 ### Config file format
 
