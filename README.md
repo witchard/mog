@@ -16,7 +16,7 @@ The man page for `cat` says that it can: concatenate files and print on the stan
 
 ## Installation
 
-The simplest way is to install via pip: `[sudo] pip install mog`.
+The simplest way is to install via pip: `[sudo] pip install mog`. If you plan on using the default configuration file, then you will also want `poppler-utils` and `mediainfo` installed (e.g. `sudo apt install poppler-utils mediainfo`).
 
 For the latest development version: 
 * `[sudo] pip install git+https://github.com/witchard/mog`
@@ -42,6 +42,7 @@ Note, one can specify `invert_match`, you can use this to cause a match when the
 The following actions are supported:
 
 * `arg=<program>` - Pass the file name as an argument to the program
+* `argreplace=<program>` - Replace %F in `<program>` with the filename and execute
 
 ### Config file format
 

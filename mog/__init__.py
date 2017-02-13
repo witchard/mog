@@ -6,6 +6,10 @@ try:
     import ConfigParser as configparser
 except ImportError:
     import configparser
+try:
+    from pipes import quote
+except ImportError:
+    from shlex import quote
 import sys
 import re
 import subprocess
@@ -43,6 +47,10 @@ arg=mdv
 file_mime=.*\s(video|image)\/
 arg=mediainfo
 
+[pdfs]
+file=.*PDF document
+argreplace=pdftotext %F -
+
 [ASCII]
 file=.*ASCII
 arg=cat
@@ -71,7 +79,10 @@ def match_inverted(func, regex, name):
 
 ##### Actions
 def action_arg(action, name):
-    os.system('{} {} 2>/dev/null'.format(action, name))
+    os.system('{} {}'.format(action, quote(name)))
+
+def action_argreplace(action, name):
+    os.system(action.replace('%F', quote(name)))
 
 ##### Helpers
 def config_get_bool(cfg, value, default, section='settings'):
@@ -101,7 +112,8 @@ def parse_config():
                'file_mime': match_file_mime,
                'name': re.match,
                'pygmentize': match_pygmentize}
-    actions = {'arg': action_arg}
+    actions = {'arg': action_arg,
+               'argreplace': action_argreplace}
 
     # Parse config
     things = configparser.RawConfigParser()
