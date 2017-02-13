@@ -54,6 +54,14 @@ argreplace=pdftotext %F -
 name=.*\.tar(\.gz|\.bz2|\.Z|\.xz)?$
 arg=tar --list -f
 
+[deb]
+name=.*\.deb$
+arg=dpkg -I
+
+[rpm]
+name=.*\.rpm$
+arg=rpm -qip
+
 [ASCII]
 file=.*ASCII
 arg=cat
