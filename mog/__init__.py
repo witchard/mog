@@ -37,7 +37,7 @@ arg=ls -lh --color=always
 
 [markdown]
 name=.*\.md
-arg=mdv -t 809.5311
+arg=mdv
 
 [media]
 file_mime=.*\s(video|image)\/
