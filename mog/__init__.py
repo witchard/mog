@@ -20,6 +20,10 @@ default_config_file = """; mog config file
 showname=yes
 showsection=no
 
+[markdown]
+name=.*\.md
+arg=mdv
+
 [pygments]
 ; Pygmentize returns 'text' when it can't highlight, so we use an inverted match for text.
 invert_match=yes
@@ -37,10 +41,6 @@ arg=objdump -ft
 [filesystem]
 file_mime=.*\sinode\/
 arg=ls -lh --color=always
-
-[markdown]
-name=.*\.md
-arg=mdv
 
 [media]
 file_mime=.*\s(video|image)\/
