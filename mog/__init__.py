@@ -39,9 +39,9 @@ arg=ls -lh --color=always
 name=.*\.md
 arg=mdv -t 809.5311
 
-[images]
-file=.*image data.*
-arg=identify -format "size: %xx%y, frames: %n\\n"
+[media]
+file_mime=.*\s(video|image)\/
+arg=mediainfo
 
 [ASCII]
 file=.*ASCII
