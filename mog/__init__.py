@@ -26,10 +26,9 @@ invert_match=yes
 pygmentize=text
 arg=pygmentize
 
-[python]
-; Still required for scripts that dont have .py extension.
-file=.*Python script
-arg=pygmentize -l python
+[pygmentsmime]
+pygmentsmime=(.*)
+argreplace=pygmentize -l '%0' %F
 
 [elfs]
 file=.*ELF
@@ -74,6 +73,15 @@ def match_pygmentize(regex, name):
     tosearch = subprocess.check_output(['pygmentize', '-N', name]).decode("utf-8")
     return re.match(regex, tosearch)
 
+def match_pygmentsmime(regex, name):
+    mimetype = subprocess.check_output(['file', '-b', '--mime-type', name]).decode("utf-8").strip()
+    import pygments.lexers
+    try:
+        tosearch = pygments.lexers.get_lexer_for_mimetype(mimetype).aliases[0]
+        return re.match(regex, tosearch)
+    except:
+        return None
+
 def match_inverted(func, regex, name):
     return not func(regex, name)
 
@@ -113,7 +121,8 @@ def parse_config():
     matches = {'file': match_file,
                'file_mime': match_file_mime,
                'name': re.match,
-               'pygmentize': match_pygmentize}
+               'pygmentize': match_pygmentize,
+               'pygmentsmime': match_pygmentsmime}
     actions = {'arg': action_arg,
                'argreplace': action_argreplace}
 

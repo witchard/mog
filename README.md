@@ -34,6 +34,7 @@ Currently the following match commands are supported:
 * `file=<regex>` - Check if the output of `file` matches the regex
 * `file_mime=<regex>` - Check if the output of `file --mime` matches the regex
 * `pygmentize=<regex>` - Check if the output of `pygmentize -N` matches the regex
+* `pygmentsmime=<regex>` - Check if the pygments lexer for the files mimetype matches the regex. Always failes when there is no pygments lexer for the specified mimetype
 
 Note, one can specify `invert_match`, you can use this to cause a match when the regex does not match.
 
