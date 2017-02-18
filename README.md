@@ -53,6 +53,7 @@ The config file is an ini style format defined as follows:
 [settings]
 showname=yes
 showsection=no
+viewinless=no
 
 [name-of-match-action-1]
 match=arg
@@ -68,6 +69,7 @@ invert_match=boolean
 The `settings` section may contain the following:
 * `showname` - default: `True`. Show the name of each file before performing the action.
 * `showsection` - default: `False`. Show config file section where match occurred next to file name. `showname` must be `True` for this to work.
+* `viewinless` - default: `False`. Output everything in a pager (`less -S`).
 
 The `invert_match` value is optional and will cause the match to be inverted - i.e. you can use this to cause a match when the regex does not match.
 

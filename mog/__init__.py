@@ -17,11 +17,26 @@ import subprocess
 from functools import partial
 import argparse
 
+def myprint(s):
+    '''
+    Overriding print...
+    why!? because it seems print in python3 does magic that doesn't work when we pipe through less
+    '''
+    try:
+        if sys.version_info[0] == 3 and not hasattr(sys.stdout, 'buffer'):
+            # In viewinless mode and python3... print as binary
+            sys.stdout.write('{}\n'.format(s).encode('utf-8'))
+        else:
+            print(s)
+        sys.stdout.flush()
+    except IOError:
+        pass
 
 default_config_file = """; mog config file
 [settings]
 showname=yes
 showsection=no
+viewinless=no
 
 [markdown]
 name=.*\.md
@@ -112,12 +127,12 @@ def match_inverted(func, regex, name):
 
 ##### Actions
 def action_arg(action, name, match_result):
-    os.system('{} {}'.format(action, quote(name)))
+    subprocess.call('{} {}'.format(action, quote(name)), shell=True, stdout=sys.stdout)
 
 def action_argreplace(action, name, match_result):
     for i, val in enumerate(match_result.groups()):
         action = action.replace('%' + str(i), val)
-    os.system(action.replace('%F', quote(name)))
+    subprocess.call(action.replace('%F', quote(name)), shell=True, stdout=sys.stdout)
 
 ##### Helpers
 def config_get_bool(cfg, value, default, section='settings'):
@@ -128,14 +143,8 @@ def config_get_bool(cfg, value, default, section='settings'):
     except configparser.NoOptionError:
         return default
     except ValueError:
-        print("Invalid settings variable {} in section {} - should be boolean".format(value, section))
+        myprint("Invalid settings variable {} in section {} - should be boolean".format(value, section))
         sys.exit(1)
-
-def flush_swallow():
-    try:
-        sys.stdout.flush()
-    except:
-        pass
 
 def create_default_config(path):
     with open(path, 'w') as cfg:
@@ -160,7 +169,8 @@ def parse_config():
 
     # Extract settings
     settings = {'showname': config_get_bool(things, 'showname', True),
-                'showsection': config_get_bool(things, 'showsection', False)}
+                'showsection': config_get_bool(things, 'showsection', False),
+                'viewinless': config_get_bool(things, 'viewinless', False)}
 
     # Extract matches and actions
     things_to_do = []
@@ -184,13 +194,13 @@ def parse_config():
             elif not action and bit[0] in actions.keys():
                 action = partial(actions[bit[0]], bit[1])
             else:
-                print("Invalid config variable {} in section {}".format(bit[0], thing))
+                myprint("Invalid config variable {} in section {}".format(bit[0], thing))
                 sys.exit(1)
         if match and action:
             things_to_do.append((match, action, thing))
 
     if len(things_to_do) == 0:
-        print("Please define what you want me to do in " + cfg)
+        myprint("Please define what you want me to do in " + cfg)
     return (settings,things_to_do)
 
 ##### Running
@@ -202,21 +212,18 @@ def run_match_action(settings, things_to_do, file_name):
                 msg = file_name
                 if settings['showsection']:
                     msg = "{} [{}]".format(msg, cfg_section)
-                print('==> {} <=='.format(msg))
-                flush_swallow()
+                myprint('==> {} <=='.format(msg))
             action(file_name, match_result)
-            print()
-            flush_swallow()
+            myprint('')
             return
-    print("==> Warning: don't know what to do with {} <==".format(file_name))
+    myprint("==> Warning: don't know what to do with {} <==".format(file_name))
 
 def run(settings, things_to_do, files):
     for f in files:
         try:
             run_match_action(settings, things_to_do, f)
         except Exception as e:
-            print('==> Error: "{}" when processing file {} <=='.format(repr(e), f))
-            flush_swallow()
+            myprint('==> Error: "{}" when processing file {} <=='.format(repr(e), f))
 
 def exists_file(f):
     if os.path.exists(f):
@@ -230,6 +237,8 @@ def parse_args(settings):
             help='invert showname setting, currently: {}'.format(settings['showname']))
     parser.add_argument('-s', '--section', action='store_true',
             help='invert showsection setting, currently: {}'.format(settings['showsection']))
+    parser.add_argument('-l', '--less', action='store_true',
+            help='invert viewinless setting, currently: {}'.format(settings['viewinless']))
     parser.add_argument('FILE', nargs='+', help='file(s) to process', type=exists_file)
     args = parser.parse_args(sys.argv[1:])
 
@@ -237,6 +246,8 @@ def parse_args(settings):
         settings['showname'] = not settings['showname']
     if args.section:
         settings['showsection'] = not settings['showsection']
+    if args.less:
+        settings['viewinless'] = not settings['viewinless']
 
     return args.FILE
 
@@ -245,7 +256,19 @@ def main():
     files = parse_args(settings)
     if len(config) == 0:
         sys.exit(1)
+    if settings['viewinless']:
+        less = subprocess.Popen(['less', '-S'], stdin=subprocess.PIPE)
+        sys.stdout.close()
+        sys.stdout = less.stdin
+    else:
+        less = None
     run(settings, config, files)
+    try:
+        sys.stdout.close()
+    except BrokenPipeError:
+        pass
+    if less:
+        less.wait()
 
 if __name__ == "__main__":
     main()
