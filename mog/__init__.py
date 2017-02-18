@@ -62,6 +62,14 @@ arg=dpkg -I
 name=.*\.rpm$
 arg=rpm -qip
 
+[csv]
+name=.*\.csv$
+arg=column -xt -s,
+
+[tsv]
+name=.*\.tsv$
+arg=column -xt
+
 [ASCII]
 file=.*ASCII
 arg=cat
