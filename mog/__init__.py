@@ -2,6 +2,7 @@
 
 from __future__ import print_function
 import os
+import os.path
 try:
     import ConfigParser as configparser
 except ImportError:
@@ -14,6 +15,8 @@ import sys
 import re
 import subprocess
 from functools import partial
+import argparse
+
 
 default_config_file = """; mog config file
 [settings]
@@ -215,11 +218,27 @@ def run(settings, things_to_do, files):
             print('==> Error: "{}" when processing file {} <=='.format(repr(e), f))
             flush_swallow()
 
+def exists_file(f):
+    if os.path.exists(f):
+        return f
+    else:
+        raise argparse.ArgumentTypeError("can't open {}: does not exist".format(f))
+
+def parse_args():
+    parser = argparse.ArgumentParser()
+    parser.add_argument('FILE', nargs='+', help='File(s) to process', type=exists_file)
+    try:
+        return parser.parse_args(sys.argv[1:])
+    except IOError as e:
+        print('==> Error: {} <=='.format(e))
+        sys.exit(1)
+
 def main():
     settings, config = parse_config()
+    args = parse_args()
     if len(config) == 0:
         sys.exit(1)
-    run(settings, config, sys.argv[1:])
+    run(settings, config, args.FILE)
 
 if __name__ == "__main__":
     main()
