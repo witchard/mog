@@ -224,21 +224,28 @@ def exists_file(f):
     else:
         raise argparse.ArgumentTypeError("can't open {}: does not exist".format(f))
 
-def parse_args():
+def parse_args(settings):
     parser = argparse.ArgumentParser()
-    parser.add_argument('FILE', nargs='+', help='File(s) to process', type=exists_file)
-    try:
-        return parser.parse_args(sys.argv[1:])
-    except IOError as e:
-        print('==> Error: {} <=='.format(e))
-        sys.exit(1)
+    parser.add_argument('-n', '--name', action='store_true',
+            help='invert showname setting, currently: {}'.format(settings['showname']))
+    parser.add_argument('-s', '--section', action='store_true',
+            help='invert showsection setting, currently: {}'.format(settings['showsection']))
+    parser.add_argument('FILE', nargs='+', help='file(s) to process', type=exists_file)
+    args = parser.parse_args(sys.argv[1:])
+
+    if args.name:
+        settings['showname'] = not settings['showname']
+    if args.section:
+        settings['showsection'] = not settings['showsection']
+
+    return args.FILE
 
 def main():
     settings, config = parse_config()
-    args = parse_args()
+    files = parse_args(settings)
     if len(config) == 0:
         sys.exit(1)
-    run(settings, config, args.FILE)
+    run(settings, config, files)
 
 if __name__ == "__main__":
     main()
