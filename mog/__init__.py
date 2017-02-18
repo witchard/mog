@@ -90,6 +90,8 @@ def match_pygmentsmime(regex, name):
     import pygments.lexers
     try:
         tosearch = pygments.lexers.get_lexer_for_mimetype(mimetype).aliases[0]
+        if tosearch == 'text':
+            return None # Skip raw text
         return re.match(regex, tosearch)
     except:
         return None
