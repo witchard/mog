@@ -16,7 +16,9 @@ The man page for `cat` says that it can: concatenate files and print on the stan
 
 ## Installation
 
-The simplest way is to install via pip: `[sudo] pip install mog`. If you plan on using the default configuration file, then you will also want `poppler-utils` and `mediainfo` installed (e.g. `sudo apt install poppler-utils mediainfo`).
+The simplest way is to install via pip: `[sudo] pip install mog`.
+
+If you plan on using the default configuration file, then you will also want `poppler-utils` and `mediainfo` installed (e.g. `sudo apt install poppler-utils mediainfo` on a debian based machine). You'll also need `pygmentize` and `mdv` - these should be installed automatically with `pip install mog`, but some users have reported this not to be the case (e.g. issue #18) - if this happens a separate `pip install pygments mdv` will hopefully do the trick.
 
 For the latest development version: 
 * `[sudo] pip install git+https://github.com/witchard/mog`
