@@ -221,12 +221,16 @@ def run_match_action(settings, things_to_do, file_name):
                     msg = "{} [{}]".format(msg, cfg_section)
                 myprint('==> {} <=='.format(msg))
             action(file_name, match_result, suffix)
-            myprint('')
             return
     myprint("==> Warning: don't know what to do with {} <==".format(file_name))
 
 def run(settings, things_to_do, files):
+    first = True
     for f in files:
+        if first:
+            first = False
+        else:
+            myprint('')
         try:
             run_match_action(settings, things_to_do, f)
         except Exception as e:
