@@ -37,6 +37,8 @@ default_config_file = """; mog config file
 showname=yes
 showsection=no
 viewinless=no
+toponly=no
+toplines=10
 
 [markdown]
 name=.*\.md
@@ -126,18 +128,18 @@ def match_inverted(func, regex, name):
     return not func(regex, name)
 
 ##### Actions
-def action_arg(action, name, match_result):
-    subprocess.call('{} {}'.format(action, quote(name)), shell=True, stdout=sys.stdout)
+def action_arg(action, name, match_result, suffix):
+    subprocess.call('{} {} {}'.format(action, quote(name), suffix), shell=True, stdout=sys.stdout)
 
-def action_argreplace(action, name, match_result):
+def action_argreplace(action, name, match_result, suffix):
     for i, val in enumerate(match_result.groups()):
         action = action.replace('%' + str(i), val)
-    subprocess.call(action.replace('%F', quote(name)), shell=True, stdout=sys.stdout)
+    subprocess.call(action.replace('%F', quote(name) + ' ' + suffix), shell=True, stdout=sys.stdout)
 
 ##### Helpers
-def config_get_bool(cfg, value, default, section='settings'):
+def config_get(func, value, default, section='settings'):
     try:
-        return cfg.getboolean(section, value)
+        return func(section, value)
     except configparser.NoSectionError:
         return default
     except configparser.NoOptionError:
@@ -168,9 +170,11 @@ def parse_config():
     things.read(cfg)
 
     # Extract settings
-    settings = {'showname': config_get_bool(things, 'showname', True),
-                'showsection': config_get_bool(things, 'showsection', False),
-                'viewinless': config_get_bool(things, 'viewinless', False)}
+    settings = {'showname'   : config_get(things.getboolean, 'showname', True),
+                'showsection': config_get(things.getboolean, 'showsection', False),
+                'viewinless' : config_get(things.getboolean, 'viewinless', False),
+                'toponly'    : config_get(things.getboolean, 'toponly', False),
+                'toplines'   : config_get(things.getint, 'toplines', 10)}
 
     # Extract matches and actions
     things_to_do = []
@@ -179,7 +183,7 @@ def parse_config():
         if thing == 'settings':
             continue
         # Parse others
-        invert_match = config_get_bool(things, 'invert_match', False, thing)
+        invert_match = config_get(things.getboolean, 'invert_match', False, thing)
         bits = things.items(thing)
         match = None
         action = None
@@ -205,6 +209,9 @@ def parse_config():
 
 ##### Running
 def run_match_action(settings, things_to_do, file_name):
+    suffix = ''
+    if settings['toponly']:
+        suffix = '| head -n {}'.format(settings['toplines'])
     for match, action, cfg_section in things_to_do:
         match_result = match(file_name)
         if match_result:
@@ -213,7 +220,7 @@ def run_match_action(settings, things_to_do, file_name):
                 if settings['showsection']:
                     msg = "{} [{}]".format(msg, cfg_section)
                 myprint('==> {} <=='.format(msg))
-            action(file_name, match_result)
+            action(file_name, match_result, suffix)
             myprint('')
             return
     myprint("==> Warning: don't know what to do with {} <==".format(file_name))
@@ -239,6 +246,8 @@ def parse_args(settings):
             help='invert showsection setting, currently: {}'.format(settings['showsection']))
     parser.add_argument('-l', '--less', action='store_true',
             help='invert viewinless setting, currently: {}'.format(settings['viewinless']))
+    parser.add_argument('-t', '--top', nargs='?', const=settings['toplines'],
+            help='change top setting, currently: {}'.format(settings['toplines'] if settings['toponly'] else False))
     parser.add_argument('FILE', nargs='+', help='file(s) to process', type=exists_file)
     args = parser.parse_args(sys.argv[1:])
 
@@ -248,6 +257,9 @@ def parse_args(settings):
         settings['showsection'] = not settings['showsection']
     if args.less:
         settings['viewinless'] = not settings['viewinless']
+    if args.top:
+        settings['toponly'] = not settings['toponly']
+        settings['toplines'] = args.top
 
     return args.FILE
 

@@ -56,6 +56,8 @@ The config file is an ini style format defined as follows:
 showname=yes
 showsection=no
 viewinless=no
+toponly=no
+toplines=10
 
 [name-of-match-action-1]
 match=arg
@@ -69,9 +71,12 @@ invert_match=boolean
 ```
 
 The `settings` section may contain the following:
+
 * `showname` - default: `True`. Show the name of each file before performing the action.
 * `showsection` - default: `False`. Show config file section where match occurred next to file name. `showname` must be `True` for this to work.
 * `viewinless` - default: `False`. Output everything in a pager (`less -S`).
+* `toponly` - default: `False`. Output only the top few lines of each file.
+* `toplines` - default: `10`. Number of lines to output in `toponly` mode.
 
 The `invert_match` value is optional and will cause the match to be inverted - i.e. you can use this to cause a match when the regex does not match.
 
