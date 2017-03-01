@@ -24,6 +24,25 @@ For the latest development version:
 * `[sudo] pip install git+https://github.com/witchard/mog`
 * Or clone this repository and then run `[sudo] python ./setup.py install`
 
+## Default Config
+
+If you don't give `mog` a configuration file, it will use the defaults. Here is what you will get (prioritised in the order below - i.e. the first thing to match is done)
+
+* File extension is .md - Format file with `mdv` (https://github.com/axiros/terminal_markdown_viewer)
+* File extension is recognised by pygments - Format with `pygmentize` (http://pygments.org/)
+* File mime type is recognisd by pygments - Format with `pygmentize` (http://pygments.org/)
+* File type is ELF - Parse with `objdump -ft`
+* File is not a file (i.e. directory / symlink / fifo) - List it using `ls -lh`
+* File is of a video or image mime type - Summarise it with `mediainfo` (http://mediainfo.sourceforge.net)
+* File is a PDF document - Print it as text using `pdftotext` (https://poppler.freedesktop.org/)
+* File is a tar archive - List contents of tar using `tar --list`
+* File extension is .deb - Show information using `dpkg -I`
+* File extension is .rpm - Show information using `rpm -qip`
+* File extension is .csv - Format it using `column -xt -s,`
+* File extension is .tsv - Format it using `column -xt`
+* File contains ASCII text - Print using `cat`
+* Anything else - Assumed to be binary, print using `xxd`
+
 ## How does it work?
 
 `mog` reads the `$HOME/.mogrc` config file which describes a series of operations it can do in an ordered manner. Each operation has a match command and an action command. For each file you give to `mog` it will test each match command in turn, when one matches it will perform the action. A reasonably useful config file is generated when you first run it.
