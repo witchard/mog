@@ -273,7 +273,7 @@ def main():
     if len(config) == 0:
         sys.exit(1)
     if settings['viewinless']:
-        less = subprocess.Popen(['less', '-S'], stdin=subprocess.PIPE)
+        less = subprocess.Popen(['less', '-Sr'], stdin=subprocess.PIPE)
         sys.stdout.close()
         sys.stdout = less.stdin
     else:
