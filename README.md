@@ -4,6 +4,11 @@ A different take on the UNIX tool `cat`.
 
 ![example](mog.gif)
 
+[![Travis](https://img.shields.io/travis/witchard/mog.svg)](https://travis-ci.org/witchard/mog)
+[![license](https://img.shields.io/github/license/witchard/mog.svg)](https://witchard.mit-license.org)
+[![PyPI](https://img.shields.io/pypi/v/mog.svg)](https://pypi.python.org/pypi/mog)
+[![AUR](https://img.shields.io/aur/version/mog-git.svg)](https://aur.archlinux.org/packages/mog-git/)
+
 ## What is this?
 
 The man page for `cat` says that it can: concatenate files and print on the standard output. Often (at least for me) its main use is for the latter... `mog` tries to help you "print on the standard output" in a more intelligent way. For example, it can be configured to:
