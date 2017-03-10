@@ -153,7 +153,10 @@ def create_default_config(path):
         cfg.write(default_config_file)
 
 ##### Parsing
-def parse_config():
+def default_config_path():
+    return os.path.expanduser("~/." + os.path.basename(sys.argv[0]) + "rc")
+
+def parse_config(cfg):
     matches = {'file': match_file,
                'file_mime': match_file_mime,
                'name': re.match,
@@ -164,7 +167,6 @@ def parse_config():
 
     # Parse config
     things = configparser.RawConfigParser()
-    cfg = os.path.expanduser("~/." + os.path.basename(sys.argv[0]) + "rc")
     if not os.path.exists(cfg):
         create_default_config(cfg)
     things.read(cfg)
@@ -242,6 +244,15 @@ def exists_file(f):
     else:
         raise argparse.ArgumentTypeError("can't open {}: does not exist".format(f))
 
+def add_pre_args(parser):
+    parser.add_argument('-c', '--config', help='config file to use', default=default_config_path())
+
+def parse_pre_args():
+    parser = argparse.ArgumentParser(add_help=False)
+    add_pre_args(parser)
+    args, _ = parser.parse_known_args(sys.argv[1:])
+    return args.config
+
 def parse_args(settings):
     parser = argparse.ArgumentParser()
     parser.add_argument('-n', '--name', action='store_true',
@@ -253,6 +264,7 @@ def parse_args(settings):
     parser.add_argument('-t', '--top', nargs='?', const=settings['toplines'],
             help='change top setting, currently: {}'.format(settings['toplines'] if settings['toponly'] else False))
     parser.add_argument('FILE', nargs='+', help='file(s) to process', type=exists_file)
+    add_pre_args(parser)
     args = parser.parse_args(sys.argv[1:])
 
     if args.name:
@@ -268,7 +280,8 @@ def parse_args(settings):
     return args.FILE
 
 def main():
-    settings, config = parse_config()
+    cfg = parse_pre_args()
+    settings, config = parse_config(cfg)
     files = parse_args(settings)
     if len(config) == 0:
         sys.exit(1)
