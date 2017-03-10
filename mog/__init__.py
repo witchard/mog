@@ -40,6 +40,7 @@ viewinless=no
 toponly=no
 toplines=10
 followsymlinks=no
+recursive=no
 
 [markdown]
 name=.*\.md
@@ -175,7 +176,8 @@ def parse_config(cfg):
                 'viewinless' : config_get(things.getboolean, 'viewinless', False),
                 'toponly'    : config_get(things.getboolean, 'toponly', False),
                 'toplines'   : config_get(things.getint, 'toplines', 10),
-                'followsymlinks' : config_get(things.getboolean, 'followsymlinks', False)}
+                'followsymlinks' : config_get(things.getboolean, 'followsymlinks', False),
+                'recursive'  : config_get(things.getboolean, 'recursive', False)}
 
     # Extract matches and actions
     things_to_do = []
@@ -265,6 +267,8 @@ def parse_args(settings):
             help='change top setting, currently: {}'.format(settings['toplines'] if settings['toponly'] else False))
     parser.add_argument('-f', '--followsymlinks', action='store_true',
             help='invert followsymlinks setting, currently: {}'.format(settings['followsymlinks']))
+    parser.add_argument('-r', '--recursive', action='store_true',
+            help='invert recursive setting, currently: {}'.format(settings['recursive']))
     parser.add_argument('FILE', nargs='+', help='file(s) to process', type=exists_file)
     add_pre_args(parser)
     args = parser.parse_args()
@@ -280,12 +284,34 @@ def parse_args(settings):
         settings['toplines'] = args.top
     if args.followsymlinks:
         settings['followsymlinks'] = not settings['followsymlinks']
+    if args.recursive:
+        settings['recursive'] = not settings['recursive']
 
     return args.FILE
 
 def munge_files(files, settings):
+    # Note we use a set to remove duplicates when playing with symlinks
     if settings['followsymlinks']:
-        files = map(os.path.realpath, files)
+        files = set(map(os.path.realpath, files))
+    if settings['recursive']:
+        newfiles = set()
+        for f in files:
+            if os.path.isdir(f):
+                for root, dirs, newfs in os.walk(f, followlinks=settings['followsymlinks']):
+                    if not settings['followsymlinks']:
+                        # symlinks to dirs appear in dirs, if we aren't following them we had better add them
+                        for d in dirs:
+                            d = os.path.join(root, d)
+                            if os.path.islink(d):
+                                newfiles.add(d)
+                    for newf in newfs:
+                        newfile = os.path.join(root, newf)
+                        if settings['followsymlinks']:
+                            newfile = os.path.realpath(newfile)
+                        newfiles.add(newfile)
+            else:
+                newfiles.add(f)
+        files = newfiles
     return files
 
 def main():
