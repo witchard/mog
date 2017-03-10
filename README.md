@@ -52,7 +52,7 @@ If you don't give `mog` a configuration file, it will use the defaults. Here is 
 
 ## How does it work?
 
-`mog` reads the `$HOME/.mogrc` config file which describes a series of operations it can do in an ordered manner. Each operation has a match command and an action command. For each file you give to `mog` it will test each match command in turn, when one matches it will perform the action. A reasonably useful config file is generated when you first run it.
+`mog` reads the `$HOME/.mogrc` config file which describes a series of operations it can do in an ordered manner. The config file can be overridden with the `--config` argument. Each operation has a match command and an action command. For each file you give to `mog` it will test each match command in turn, when one matches it will perform the action. A reasonably useful config file is generated when you first run it.
 
 ### Matches
 
