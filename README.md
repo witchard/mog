@@ -84,6 +84,7 @@ showsection=no
 viewinless=no
 toponly=no
 toplines=10
+followsymlinks=no
 
 [name-of-match-action-1]
 match=arg
@@ -103,6 +104,7 @@ The `settings` section may contain the following:
 * `viewinless` - default: `False`. Output everything in a pager (`less -S`).
 * `toponly` - default: `False`. Output only the top few lines of each file.
 * `toplines` - default: `10`. Number of lines to output in `toponly` mode.
+* `followsymlinks` - default: `False`. Follow symbolic links when processing files.
 
 The `invert_match` value is optional and will cause the match to be inverted - i.e. you can use this to cause a match when the regex does not match.
 

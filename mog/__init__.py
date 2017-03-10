@@ -39,6 +39,7 @@ showsection=no
 viewinless=no
 toponly=no
 toplines=10
+followsymlinks=no
 
 [markdown]
 name=.*\.md
@@ -173,7 +174,8 @@ def parse_config(cfg):
                 'showsection': config_get(things.getboolean, 'showsection', False),
                 'viewinless' : config_get(things.getboolean, 'viewinless', False),
                 'toponly'    : config_get(things.getboolean, 'toponly', False),
-                'toplines'   : config_get(things.getint, 'toplines', 10)}
+                'toplines'   : config_get(things.getint, 'toplines', 10),
+                'followsymlinks' : config_get(things.getboolean, 'followsymlinks', False)}
 
     # Extract matches and actions
     things_to_do = []
@@ -261,6 +263,8 @@ def parse_args(settings):
             help='invert viewinless setting, currently: {}'.format(settings['viewinless']))
     parser.add_argument('-t', '--top', nargs='?', const=settings['toplines'],
             help='change top setting, currently: {}'.format(settings['toplines'] if settings['toponly'] else False))
+    parser.add_argument('-f', '--followsymlinks', action='store_true',
+            help='invert followsymlinks setting, currently: {}'.format(settings['followsymlinks']))
     parser.add_argument('FILE', nargs='+', help='file(s) to process', type=exists_file)
     add_pre_args(parser)
     args = parser.parse_args()
@@ -274,13 +278,21 @@ def parse_args(settings):
     if args.top:
         settings['toponly'] = not settings['toponly']
         settings['toplines'] = args.top
+    if args.followsymlinks:
+        settings['followsymlinks'] = not settings['followsymlinks']
 
     return args.FILE
+
+def munge_files(files, settings):
+    if settings['followsymlinks']:
+        files = map(os.path.realpath, files)
+    return files
 
 def main():
     cfg = parse_pre_args()
     settings, config = parse_config(cfg)
     files = parse_args(settings)
+    files = munge_files(files, settings)
     if len(config) == 0:
         sys.exit(1)
     if settings['viewinless']:
