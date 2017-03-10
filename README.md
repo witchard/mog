@@ -1,4 +1,4 @@
-# `mog` 
+# `mog`
 
 A different take on the UNIX tool `cat`.
 
@@ -20,7 +20,9 @@ The simplest way is to install via pip: `[sudo] pip install mog`.
 
 If you plan on using the default configuration file, then you will also want `poppler-utils` and `mediainfo` installed (e.g. `sudo apt install poppler-utils mediainfo` on a debian based machine). You'll also need `pygmentize` and `mdv` - these should be installed automatically with `pip install mog`, but some users have reported this not to be the case (e.g. issue #18) - if this happens a separate `pip install pygments mdv` will hopefully do the trick.
 
-For the latest development version: 
+@gregf has kindly provided an Arch Linux package: https://aur.archlinux.org/packages/mog-git/.
+
+For the latest development version:
 * `[sudo] pip install git+https://github.com/witchard/mog`
 * Or clone this repository and then run `[sudo] python ./setup.py install`
 
@@ -102,4 +104,3 @@ The `invert_match` value is optional and will cause the match to be inverted - i
 Matches and actions will be processed in the order found in the file.
 
 It should be noted that `mog` uses the name of the script to determine what config file to read. So for example one can `ln -s mog feline` and then it would use the `$HOME/.felinerc` as the config file. This means you can have multiple configurations for different names.
-
