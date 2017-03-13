@@ -240,7 +240,7 @@ def run(settings, things_to_do, files):
             myprint('==> Error: "{}" when processing file {} <=='.format(repr(e), f))
 
 def exists_file(f):
-    if os.path.exists(f):
+    if os.path.lexists(f):
         return f
     else:
         raise argparse.ArgumentTypeError("can't open {}: does not exist".format(f))
@@ -292,7 +292,7 @@ def parse_args(settings):
 def munge_files(files, settings):
     # Note we use a set to remove duplicates when playing with symlinks
     if settings['followsymlinks']:
-        files = set(map(os.path.realpath, files))
+        files = set(filter(os.path.exists, map(os.path.realpath, files)))
     if settings['recursive']:
         newfiles = set()
         for f in files:
@@ -308,7 +308,8 @@ def munge_files(files, settings):
                         newfile = os.path.join(root, newf)
                         if settings['followsymlinks']:
                             newfile = os.path.realpath(newfile)
-                        newfiles.add(newfile)
+                        if os.path.exists(newfile):
+                            newfiles.add(newfile)
             else:
                 newfiles.add(f)
         files = newfiles
