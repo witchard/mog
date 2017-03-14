@@ -32,6 +32,9 @@ def myprint(s):
     except IOError:
         pass
 
+# Open dev null once
+DEVNULL = open('/dev/null', 'w')
+
 default_config_file = """; mog config file
 [settings]
 showname=yes
@@ -132,7 +135,7 @@ def match_inverted(func, regex, name):
 ##### Actions
 def run_program(cmd):
     try:
-        subprocess.check_call(cmd, shell=True, stdout=sys.stdout, stderr=open('/dev/null', 'w'))
+        subprocess.check_call(cmd, shell=True, stdout=sys.stdout, stderr=DEVNULL)
     except subprocess.CalledProcessError as e:
         myprint('==> Error processing file: {} <=='.format(e))
 
