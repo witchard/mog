@@ -107,7 +107,7 @@ def match_file(regex, name):
     return re.match(regex, tosearch)
 
 def match_file_mime(regex, name):
-    tosearch = subprocess.check_output(['file', '--mime', name]).decode("utf-8")
+    tosearch = subprocess.check_output(['file', '--mime', '-k', name]).decode("utf-8")
     return re.match(regex, tosearch)
 
 def match_pygmentize(regex, name):
@@ -115,7 +115,7 @@ def match_pygmentize(regex, name):
     return re.match(regex, tosearch)
 
 def match_pygmentsmime(regex, name):
-    mimetype = subprocess.check_output(['file', '-b', '--mime-type', name]).decode("utf-8").strip()
+    mimetype = subprocess.check_output(['file', '-b', '-k', '--mime-type', name]).decode("utf-8").strip()
     import pygments.lexers
     try:
         tosearch = pygments.lexers.get_lexer_for_mimetype(mimetype).aliases[0]
