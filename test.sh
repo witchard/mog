@@ -38,7 +38,7 @@ function run_test_prepost {
   $5
 }
 
-run_test "markdown" "./mog -nf README.md" "mdv README.md"
+run_test "markdown" "./mog -nf README.md" "pygmentize README.md"
 
 run_test "pygments extension" "./mog -n helloworld.py" "pygmentize -l python helloworld.py"
 
