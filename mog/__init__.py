@@ -130,13 +130,19 @@ def match_inverted(func, regex, name):
     return not func(regex, name)
 
 ##### Actions
+def run_program(cmd):
+    try:
+        subprocess.check_call(cmd, shell=True, stdout=sys.stdout, stderr=open('/dev/null', 'w'))
+    except subprocess.CalledProcessError as e:
+        myprint('==> Error processing file: {} <=='.format(e))
+
 def action_arg(action, name, match_result, suffix):
-    subprocess.call('{} {} {}'.format(action, quote(name), suffix), shell=True, stdout=sys.stdout)
+    run_program('{} {} {}'.format(action, quote(name), suffix).strip())
 
 def action_argreplace(action, name, match_result, suffix):
     for i, val in enumerate(match_result.groups()):
         action = action.replace('%' + str(i), val)
-    subprocess.call(action.replace('%F', quote(name) + ' ' + suffix), shell=True, stdout=sys.stdout)
+    run_program(action.replace('%F', quote(name) + ' ' + suffix).strip())
 
 ##### Helpers
 def config_get(func, value, default, section='settings'):
