@@ -20,6 +20,24 @@ function run_test {
   fi
 }
 
+function run_test_prepost {
+  $4
+  cmp <($2) <($3)
+  if [ $? -ne 0 ]
+  then
+    echo "Missmatch when running test $1:"
+	echo
+	echo "Command 1 [$2] output:"
+	$2
+	echo
+	echo "Command 2 [$3] output:"
+	$3
+	$5
+	exit 1
+  fi
+  $5
+}
+
 run_test "markdown" "./mog -nf README.md" "mdv README.md"
 
 run_test "pygments extension" "./mog -n helloworld.py" "pygmentize -l python helloworld.py"
@@ -31,5 +49,15 @@ run_test "elf" "./mog -n /bin/cat" "objdump -ft /bin/cat"
 run_test "filesystem" "./mog -n mog.gif" "ls -lh mog.gif --color=always"
 
 run_test "image" "./mog -nf mog.gif" "mediainfo `readlink -f mog.gif`"
+
+run_test_prepost "tar" "./mog -n foo.tar" "tar --list -f foo.tar" "tar cf foo.tar hello*" "rm foo.tar"
+
+run_test "csv" "./mog -n data.csv" "column -xt -s, data.csv"
+
+run_test "tsv" "./mog -n data.tsv" "column -xt data.tsv"
+
+run_test "ascii" "./mog -n hello" "cat hello"
+
+run_test_prepost "binary" "./mog -n foo" "xxd foo" "bash ./create_binary.sh" "rm foo"
 
 echo "All tests passed"
