@@ -45,10 +45,6 @@ toplines=10
 followsymlinks=no
 recursive=no
 
-[markdown]
-name=.*\.md
-arg=mdv
-
 [pygments]
 ; Pygmentize returns 'text' when it can't highlight, so we use an inverted match for text.
 invert_match=yes

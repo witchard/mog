@@ -23,7 +23,9 @@ The man page for `cat` says that it can: concatenate files and print on the stan
 
 The simplest way is to install via pip: `[sudo] pip install mog`.
 
-If you plan on using the default configuration file, then you will also want `poppler-utils` and `mediainfo` installed (e.g. `sudo apt install poppler-utils mediainfo` on a debian based machine). You'll also need `pygmentize` and `mdv` - these should be installed automatically with `pip install mog`, but some users have reported this not to be the case (e.g. issue #18) - if this happens a separate `pip install pygments mdv` will hopefully do the trick.
+Required dependencies are the `file` command (e.g. `sudo apt install file`).
+
+If you plan on using the default configuration file, then you will also want `poppler-utils`, `binutils` and `mediainfo` installed (e.g. `sudo apt install poppler-utils binutils mediainfo` on a debian based machine). You'll also need `pygmentize` - this should be installed automatically with `pip install mog`, but some users have reported this not to be the case (e.g. issue #18) - if this happens a separate `pip install pygments` will hopefully do the trick.
 
 @gregf has kindly provided an Arch Linux package: https://aur.archlinux.org/packages/mog-git/. There is also a FreeBSD port: https://www.freebsd.org/cgi/ports.cgi?query=%5Emog&stype=name&sektion=sysutils.
 
@@ -35,7 +37,6 @@ For the latest development version:
 
 If you don't give `mog` a configuration file, it will use the defaults. Here is what you will get (prioritised in the order below - i.e. the first thing to match is done)
 
-* File extension is .md - Format file with `mdv` (https://github.com/axiros/terminal_markdown_viewer)
 * File extension is recognised by pygments - Format with `pygmentize` (http://pygments.org/)
 * File mime type is recognisd by pygments - Format with `pygmentize` (http://pygments.org/)
 * File type is ELF - Parse with `objdump -ft`

@@ -4,7 +4,7 @@ setup(
   packages = ['mog'],
   version = '0.5.0',
   description = 'A different take on the UNIX tool cat',
-  install_requires = ['mdv', 'pygments'],
+  install_requires = ['pygments'],
   author = 'witchard',
   author_email = 'witchard@hotmail.co.uk',
   url = 'https://github.com/witchard/mog',
