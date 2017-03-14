@@ -256,19 +256,32 @@ def parse_pre_args():
     return args.config
 
 def parse_args(settings):
+    help_text = {'name':    {True: 'show file names before displaying file',
+                             False: 'do not show file names before displaying file'},
+                 'section': {True: 'show config file section that matched before displaying file',
+                             False: 'do not show config file section that matched before displaying file'},
+                 'less':    {True: 'send output to less',
+                             False: 'do not send output to less'},
+                 'top':     {True: lambda x: 'show only top n lines of file, default (just -t): {}'.format(x),
+                             False: lambda x: 'show whole files instead of only top {} lines'.format(x)},
+                 'follow':  {True: 'follow symlinks to display the linked file',
+                             False: 'display symlinks as is'},
+                 'recurse': {True: 'recurse into directories to find files to display',
+                             False: 'display directories as is'}}
+
     parser = argparse.ArgumentParser()
     parser.add_argument('-n', '--name', action='store_true',
-            help='invert showname setting, currently: {}'.format(settings['showname']))
+            help=help_text['name'][not settings['showname']])
     parser.add_argument('-s', '--section', action='store_true',
-            help='invert showsection setting, currently: {}'.format(settings['showsection']))
+            help=help_text['section'][not settings['showsection']])
     parser.add_argument('-l', '--less', action='store_true',
-            help='invert viewinless setting, currently: {}'.format(settings['viewinless']))
+            help=help_text['less'][not settings['viewinless']])
     parser.add_argument('-t', '--top', nargs='?', const=settings['toplines'],
-            help='change top setting, currently: {}'.format(settings['toplines'] if settings['toponly'] else False))
+            help=help_text['top'][not settings['toponly']](settings['toplines']))
     parser.add_argument('-f', '--followsymlinks', action='store_true',
-            help='invert followsymlinks setting, currently: {}'.format(settings['followsymlinks']))
+            help=help_text['follow'][not settings['followsymlinks']])
     parser.add_argument('-r', '--recursive', action='store_true',
-            help='invert recursive setting, currently: {}'.format(settings['recursive']))
+            help=help_text['recurse'][not settings['recursive']])
     parser.add_argument('FILE', nargs='+', help='file(s) to process', type=exists_file)
     add_pre_args(parser)
     args = parser.parse_args()
