@@ -61,7 +61,7 @@ file=.*ELF
 arg=objdump -ft
 
 [filesystem]
-file_mime=.*\sinode\/
+file_mime=.*(\sinode\/|x-symlink|x-directory|x-fifo)
 arg=ls -lh{}
 
 [media]
