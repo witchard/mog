@@ -16,6 +16,7 @@ import re
 import subprocess
 from functools import partial
 import argparse
+import platform
 
 def myprint(s):
     '''
@@ -61,7 +62,7 @@ arg=objdump -ft
 
 [filesystem]
 file_mime=.*\sinode\/
-arg=ls -lh --color=always
+arg=ls -lh{}
 
 [media]
 file_mime=.*\s(video|image)\/
@@ -99,15 +100,15 @@ arg=cat
 ; We assume anything thats left is binary
 name=.*
 arg=xxd
-"""
+""".format(" --color=always" if platform.system() != "Darwin" else "")
 
 ##### Matches
 def match_file(regex, name):
-    tosearch = subprocess.check_output(['file', name]).decode("utf-8")
+    tosearch = subprocess.check_output(['file', '-h', name]).decode("utf-8")
     return re.match(regex, tosearch)
 
 def match_file_mime(regex, name):
-    tosearch = subprocess.check_output(['file', '--mime', '-k', name]).decode("utf-8")
+    tosearch = subprocess.check_output(['file', '--mime', '-k', '-h', name]).decode("utf-8").split('\n')[0]
     return re.match(regex, tosearch)
 
 def match_pygmentize(regex, name):
@@ -115,7 +116,7 @@ def match_pygmentize(regex, name):
     return re.match(regex, tosearch)
 
 def match_pygmentsmime(regex, name):
-    mimetype = subprocess.check_output(['file', '-b', '-k', '--mime-type', name]).decode("utf-8").strip()
+    mimetype = subprocess.check_output(['file', '-b', '-k', '-h', '--mime-type', name]).decode("utf-8").split('\n')[0].strip()
     import pygments.lexers
     try:
         tosearch = pygments.lexers.get_lexer_for_mimetype(mimetype).aliases[0]

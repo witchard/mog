@@ -44,11 +44,19 @@ run_test "pygments extension" "./mog -n helloworld.py" "pygmentize -l python hel
 
 run_test "pygments mime" "./mog -n helloworld" "pygmentize -l python helloworld"
 
-run_test "elf" "./mog -n /bin/cat" "objdump -ft /bin/cat"
+if [ `uname` != 'Darwin' ]
+then
+  run_test "elf" "./mog -n /bin/cat" "objdump -ft /bin/cat"
+fi
 
-run_test "filesystem" "./mog -n mog.gif" "ls -lh mog.gif --color=always"
+if [ `uname` == 'Darwin' ]
+then
+  run_test "filesystem" "./mog -n mog.gif" "ls -lh mog.gif"
+else
+  run_test "filesystem" "./mog -n mog.gif" "ls -lh mog.gif --color=always"
+fi
 
-run_test "image" "./mog -nf mog.gif" "mediainfo `readlink -f mog.gif`"
+run_test "image" "./mog -nf mog.gif" "mediainfo `python -c 'import os,sys;print(os.path.realpath(sys.argv[1]))' mog.gif`"
 
 run_test_prepost "tar" "./mog -n foo.tar" "tar --list -f foo.tar" "tar cf foo.tar hello*" "rm foo.tar"
 
