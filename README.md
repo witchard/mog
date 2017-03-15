@@ -6,6 +6,7 @@ A different take on the UNIX tool `cat`.
 
 [![Travis](https://img.shields.io/travis/witchard/mog.svg)](https://travis-ci.org/witchard/mog)
 [![license](https://img.shields.io/github/license/witchard/mog.svg)](https://witchard.mit-license.org)
+[![PyPI](https://img.shields.io/pypi/pyversions/mog.svg)](https://pypi.python.org/pypi/mog)
 [![PyPI](https://img.shields.io/pypi/v/mog.svg)](https://pypi.python.org/pypi/mog)
 [![AUR](https://img.shields.io/aur/version/mog-git.svg)](https://aur.archlinux.org/packages/mog-git/)
 
