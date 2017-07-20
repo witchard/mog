@@ -26,7 +26,10 @@ addons:
 before_install:
     - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew update; fi
     - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew install mediainfo poppler; fi
+    - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then python -m ensurepip --user; fi
 
-install: "pip install pygments"
+install: 
+    - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then python -m pip install pygments --user; else python -m pip install pygments; fi
+    - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then export PATH=$HOME/Library/Python/2.7/bin/:$PATH; fi
 
 script: ./test.sh
