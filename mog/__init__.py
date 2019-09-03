@@ -141,6 +141,7 @@ def action_arg(action, name, match_result, suffix):
 
 def action_argreplace(action, name, match_result, suffix):
     for i, val in enumerate(match_result.groups()):
+        if not val: continue
         action = action.replace('%' + str(i), val)
     run_program(action.replace('%F', quote(name) + ' ' + suffix).strip())
 
